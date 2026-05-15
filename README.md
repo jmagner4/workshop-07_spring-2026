@@ -23,3 +23,6 @@ There is a `code` folder in which all code for linear models is stored
 ## Rendered output
 
 Rendered PDF abalone linear model [here](https://github.com/jmagner4/workshop-07_spring-2026/blob/main/code/abalone-example.pdf)
+
+Rendered PDF sonadora
+[here](https://github.com/jmagner4/workshop-07_spring-2026/blob/main/code/sonadora-temperature-example.pdf)
