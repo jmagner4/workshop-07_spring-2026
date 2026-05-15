@@ -1,9 +1,9 @@
 ---
 title: "Linear regression: Abalone growth and pH example"
-author: "your name here"
-date: "insert date here"
+author: "Jocelyn Magner"
+date: "2026-05-15"
 format:
-  html:
+  pdf:
     toc: true # use this to display a table of contents
 execute:
   message: false # use this to make sure messages don't show up
@@ -24,6 +24,8 @@ library(flextable) # creating tables
 
 # abalone data from Hamilton et al. 2022
 abalone <- read_xlsx(here("data", "Abalone IMTA_growth and pH.xlsx"))
+#"here" directs to correct folder, look here, for this
+# use code and data folders going forward
 ```
 
 # Abalone example
@@ -34,22 +36,22 @@ Data from Hamilton et al. 2022. "Integrated multi-trophic aquaculture mitigates 
 
 Question: How does pH predict abalone growth (measured in change in shell surface area per day, mm^-2^ d^-1^)?  
 
-H~0~: **[fill in here]**  
+H~0~: **PH does not effect abalone shell growth**  
 
-H~A~: **[fill in here]**
+H~A~: **PH does effect abalone shell growth**
 
 ## b. Cleaning
 
 ```{r}
 #| label: abalone-data-cleaning
 
-# 
-abalone_clean <- abalone  
-  # 
-  clean_names()  
-  # 
-  select(mean_p_h, change_in_area_mm2_d_1_25)  
-  # 
+# creating new object from abalone dataset
+abalone_clean <- abalone |>  
+  # clean the names with lowercase and underscore
+  clean_names()  |>
+  # select desired columns
+  select(mean_p_h, change_in_area_mm2_d_1_25)  |>
+  # rename mean ph column and area column, new=old
   rename(mean_ph = mean_p_h, 
          change_in_area = change_in_area_mm2_d_1_25)
 ```
@@ -61,11 +63,11 @@ Don't forget to look at your data! Use `View(abalone_clean)` in the _Console_.
 ```{r}
 #| label: abalone-scatterplot
 
-# 
-ggplot(data = abalone_clean, # 
-       aes(x = mean_ph, # 
-           y = change_in_area)) 
-  # 
+# base layer calling gg plot
+ggplot(data = abalone_clean, # telling r which data frame
+       aes(x = mean_ph, # choosing axes, x=ph, y=shell surface area
+           y = change_in_area)) +
+  # first layer, adding points for observations
   geom_point(size = 4,
              stroke = 1,
              fill = "firebrick4",
@@ -74,7 +76,7 @@ ggplot(data = abalone_clean, #
 
 Where does the missing value come from?  
 
-**insert response here**  
+**The missing value comes from a pair of tanks in which the pH sensor malfunctioned and did not record a reading.**  
 
 Don't forget to turn your warnings off either in the individual code chunk or in the YAML at the top of the file.
 
@@ -86,17 +88,19 @@ Don't forget to turn your warnings off either in the individual code chunk or in
 #| label: abalone-model
 
 abalone_model <- lm(
-  change_in_area ~ mean_ph, # 
-  data = abalone_clean      # 
+  change_in_area ~ mean_ph, # formula: change in shell as function of pH
+  data = abalone_clean      # using clean data frame
 )
+
+#run in console for succinct info
 ```
 
 ### Diagnostics
 
 ```{r abalone-model-diagnostics}
 
-par(mfrow = c(2, 2))   # 
-plot(abalone_model)    # 
+par(mfrow = c(2, 2))   # displays plots in 2x2 grid, must include
+plot(abalone_model)    # display diagnostic plots
 
 ```
 
@@ -112,18 +116,18 @@ summary(abalone_model)
 
 What is the slope estimate (with standard error?)  
 
-**insert your response here**  
+$\beta_1$ = 2.98  $\pm$ = 0.76
 
 What is the intercept estimate (with standard error?)  
 
-**insert your response here**
+$\beta_0$ = -18.50 $\pm$ = 6.16
 
 ### Generating predictions
 
 ```{r}
 #| label: abalone-model-predictions
 
-# creating a new object called abalone_preds
+# creating a new object called abalone_preds (has more info than display)
 abalone_preds <- ggpredict(
   abalone_model,      # model object
   terms = "mean_ph"   # predictor (in quotation marks)
@@ -137,7 +141,7 @@ Look at the column names using `colnames(abalone_preds)` in the Console.
 
 What are the column names?  
 
-**insert your notes here**  
+**x, predicted, std.error, conf.low, conf.high, group (not going to worry about group col for now**  
 
 Look at the actual object (by clicking on it in Environment).  
 
@@ -169,7 +173,7 @@ ggpredict(
 
 How would you interpret this?  
 
-**insert your response here**
+**You could expect abalone to growth to be 5.36 mm^2/day at ph = 8 [95%CI 5.08, 5.64]**
 
 ### Visualizing model predictions and data
 
