@@ -114,7 +114,7 @@ plot(temperature_model)
 
 ```{r}
 #| label: temperature-model-summary
-
+#display summary 
 summary(temperature_model)
 
 ```
