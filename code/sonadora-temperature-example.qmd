@@ -3,7 +3,7 @@ title: "Linear regression: Sonadora temperature and elevation example"
 author: "your name here"
 date: "insert date here"
 format:
-  html:
+  pdf:
     toc: true # use this to display a table of contents
 execute:
   message: false # use this to make sure messages don't show up
@@ -44,7 +44,7 @@ H~A~: Elevation (m) predicts temperature (°C).
 
 # creating new clean data frame
 sonadora_clean <- sonadora |> 
-  # clean column names
+  # clean column names to lowercase and underscores
   clean_names() |> 
   # make the data frame longer
   pivot_longer(cols = plot_250:plot_1000,
@@ -64,8 +64,8 @@ sonadora_clean <- sonadora |>
 sonadora_sum <- sonadora_clean |> 
   # group by plot and elevation
   group_by(plot_name, elevation_m) |> 
-  # calculate mean temperature at each elevation
-  summarize(mean_temp_c = mean(temp_c, na.rm = TRUE)) |> 
+  # calculate mean temperature at each elevation, round to one decimal
+  summarize(mean_temp_c = round(mean(temp_c, na.rm = TRUE), 1)) |> 
   # undo the group_by function
   ungroup() |> 
   # arrange in order of elevation
@@ -83,7 +83,7 @@ ggplot(data = sonadora_sum,
            y = mean_temp_c)) +
   # first layer: points representing temperature at each elevation
   geom_point()
-
+# looks pretty linear
 ```
 
 ## d. Temperature model
@@ -108,13 +108,16 @@ temperature_model <- lm(
 par(mfrow = c(2, 2))
 plot(temperature_model)
 
+#display 4 plots to interpret linearity
+
 ```
 
 ### Model summary
 
 ```{r}
 #| label: temperature-model-summary
-#display summary 
+
+# display summary 
 summary(temperature_model)
 
 ```
@@ -176,6 +179,7 @@ ggplot(data = sonadora_sum,
 ```{r}
 #| label: temperature-model-table
 
+#create table
 as_flextable(temperature_model)
 ```
 
